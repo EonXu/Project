@@ -326,10 +326,11 @@ class RNN(nn.Module):
         self.input_shape = input_shape
         # 如果配置中启用了卷积（args.conv 为真），则创建卷积层
         if args.conv:
-            self.conv_size = int((args.map_size - args.kernel_size_1) / args.stride_1 + 1)
+            self.conv_size = int((args.map_size - args.kernel_size_1) / args.stride_1 + 1)#24
             self.conv = nn.Sequential(
+                #1,4,4,2
                 nn.Conv2d(1, args.dim_1, args.kernel_size_1, args.stride_1),  # (1, 50, 50) --> (4, 24, 24)
-                nn.ReLU(),
+                nn.ReLU(),#4,1,2,1,1
                 nn.Conv2d(args.dim_1, args.dim_2, args.kernel_size_2, args.stride_2, args.padding_2),
                 # (4, 24, 24) --> (8, 24, 24)
                 nn.ReLU()
@@ -345,7 +346,7 @@ class RNN(nn.Module):
         # 定义一个线性层和激活函数的序列，最终输出维度为 args.n_actions
         self.fc2 = nn.Sequential(
             nn.Linear(args.rnn_hidden_dim, args.rnn_hidden_dim),
-            # nn.ReLU(),
+            nn.ReLU(),
             # nn.Linear(args.rnn_hidden_dim, args.n_actions)
         )
 

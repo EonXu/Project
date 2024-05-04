@@ -2,6 +2,8 @@ import torch
 import numpy as np
 from policy.DDQN import DDQN
 from policy.D3QN import D3QN
+from policy.DQN import DQN
+from policy.DoubleDQN import DoubleDQN
 from policy.trandition import Random
 from policy.reinforce import Reinforce
 from torch.distributions import Categorical
@@ -27,6 +29,10 @@ class Agents():
             self.policy = DDQN(args)
         elif args.alg == 'd3qn':
             self.policy = D3QN(args)
+        elif args.alg == 'doubledqn':
+            self.policy = DoubleDQN(args)
+        elif args.alg == 'dqn':
+            self.policy = DQN(args)
         elif args.alg == 'random':
             self.policy = Random(args)
         else:
@@ -70,6 +76,9 @@ class Agents():
                 # 还更新policy的eval_hidden属性以反映当前代理的变化。
                 q_values, self.policy.eval_hidden[:, agent_num, :] = self.policy.eval_ddqn(inputs, hidden_state)
                 # print("Q Values:", q_values)
+            elif self.args.alg == 'doubledqn'or self.args.alg == 'dqn':
+                # 将inputs和hidden_state张量传递给policy的eval_rnn方法，获取Q值(q_value)
+                q_values, self.policy.eval_hidden[:, agent_num, :] = self.policy.eval_dqn(inputs, hidden_state)
             else:
                 q_value, self.policy.eval_hidden[:, agent_num, :] = self.policy.eval_rnn(inputs, hidden_state)
 

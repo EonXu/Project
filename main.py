@@ -5,7 +5,7 @@ from runner import Runner
 from env.flight_env_easy import FlightSearchEnvEasy
 from env.flight_env import FlightSearchEnv
 from env.test_env import TestSearchEnv
-from arguments import get_common_args, get_reinforce_args,get_ddqn_args, get_flight_easy_args,get_flight_args,get_d3qn_args,get_traditional_args
+from arguments import get_common_args, get_reinforce_args,get_ddqn_args,get_dqn_args,get_flight_easy_args,get_flight_args,get_d3qn_args,get_traditional_args,get_doubledqn_args
 print(torch.__version__)
 print(torch.cuda.is_available())
 
@@ -119,8 +119,12 @@ if __name__ == "__main__":
         args = get_reinforce_args(args)
     elif args.alg.find('d3qn') > -1:
         args = get_d3qn_args(args)
+    elif args.alg.find('dqn') > -1:
+        args = get_dqn_args(args)
     elif args.alg.find('ddqn') > -1:
         args = get_ddqn_args(args)
+    elif args.alg.find('doubledqn') > -1:
+        args = get_doubledqn_args(args)
     elif args.alg.find('random') > -1:
         args = get_traditional_args(args)
 
@@ -165,7 +169,7 @@ if __name__ == "__main__":
         if args.show:
             # 如果不需要收集数据，进行回放
             if not args.experiment:
-                runner.replay(4715)
+                runner.replay(1521)
             else:
                 #如果需要收集实验数据
                 model_idx = 25
@@ -178,3 +182,17 @@ if __name__ == "__main__":
 
         # 关闭环境
         env.close()
+
+#     # 加载目标数量数据
+#     targets_find_file = os.path.join(result_path, 'targets_find_{}.npy'.format(0))
+#     if os.path.exists(targets_find_file):
+#         targets_find = np.load(targets_find_file)
+#         print("Targets found ({}):".format(targets_find.shape))
+#         print(targets_find)
+#
+#     # 加载回报数据
+#     episode_rewards_file = os.path.join(result_path, 'episode_rewards_{}.npy'.format(0))
+#     if os.path.exists(episode_rewards_file):
+#         episode_rewards = np.load(episode_rewards_file)
+#         print("\nEpisode rewards ({}):".format(episode_rewards.shape))
+#         print(episode_rewards)

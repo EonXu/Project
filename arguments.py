@@ -30,7 +30,7 @@ def get_common_args():
     parser.add_argument('--target_mode', type=int, default=0, help='targets location mode')
     parser.add_argument('--target_dir', type=str, default='./targets/', help='targets directory')
     parser.add_argument('--agent_mode', type=int, default=0, help='agents location mode')       # bottom line
-    parser.add_argument('--n_agents', type=int, default=5, help='the num of agents')
+    parser.add_argument('--n_agents', type=int, default=4, help='the num of agents')
     parser.add_argument('--view_range', type=int, default=7, help='the view range of agent')
     # algorithms args
     parser.add_argument('--alg', type=str, default='d3qn', help='the algorithms for training')
@@ -118,7 +118,7 @@ def get_ddqn_args(args):
     args.save_cycle = 500
     return args
 
-def get_d3qn_args(args):
+def get_doubledqn_args(args):
     args.off_policy = False
     args.rnn_hidden_dim = 64
     if not args.show and not args.load_model:
@@ -131,6 +131,70 @@ def get_d3qn_args(args):
                 if seed not in currseeds:
                     args.seed = seed
                     break
+    args.epsilon_anneal_scale = 'epoch'
+    # experience replay
+    args.batch_size = 32
+    args.buffer_size = int(3000)
+    # the number of the train step in one epoch
+    args.train_steps = 1
+    args.lr = 1e-4
+    # the number of the epoch to train the agent
+    args.n_epoch = 100000
+    # how often to evaluate
+    args.evaluate_cycle = 10
+    # the number of the episodes in one epoch
+    args.n_episodes = 1
+    args.target_update_cycle = 50
+
+    # how often to save the model
+    args.save_cycle = 10
+    return args
+
+def get_dqn_args(args):
+    args.off_policy = False
+    args.rnn_hidden_dim = 64
+    if not args.show and not args.load_model:
+        if args.seed_idx < len(SEED):
+            args.seed = SEED[args.seed_idx]
+        else:
+            currseeds = get_current_seeds()
+            while True:
+                seed = np.random.randint(10000000, 99999999)
+                if seed not in currseeds:
+                    args.seed = seed
+                    break
+    args.epsilon_anneal_scale = 'epoch'
+    # experience replay
+    args.batch_size = 32
+    args.buffer_size = int(3000)
+    # the number of the train step in one epoch
+    args.train_steps = 1
+    args.lr = 1e-4
+    # the number of the epoch to train the agent
+    args.n_epoch = 100000
+    # how often to evaluate
+    args.evaluate_cycle = 200
+    # the number of the episodes in one epoch
+    args.n_episodes = 1
+
+    # how often to save the model
+    args.save_cycle = 200
+    return args
+
+def get_d3qn_args(args):
+    args.off_policy = False
+    args.rnn_hidden_dim = 64
+    args.seed = 37763296
+    # if not args.show and not args.load_model:
+    #     if args.seed_idx < len(SEED):
+    #         args.seed = SEED[args.seed_idx]
+    #     else:
+    #         currseeds = get_current_seeds()
+    #         while True:
+    #             seed = np.random.randint(10000000, 99999999)
+    #             if seed not in currseeds:
+    #                 args.seed = seed
+    #                 break
     args.epsilon_anneal_scale = 'epoch'
     # experience replay
     args.batch_size = 32
@@ -158,7 +222,15 @@ def get_traditional_args(args):
     args.epsilon = 0
     args.anneal_epsilon = 0
     args.min_epsilon = 0
+    args.n_epoch = 100000
+    args.epsilon_anneal_scale = 'epoch'
+    # how often to evaluate
+    args.evaluate_cycle = 10
+    # the number of the episodes in one epoch
+    args.n_episodes = 1
 
+    # how often to save the model
+    args.save_cycle = 200
     args.seed = 0
     return args
 
@@ -194,15 +266,6 @@ def get_flight_args(args):
 
     # env
     args.conv = True
-    args.dim_1 = 4
-    args.kernel_size_1 = 4
-    args.stride_1 = 2
-    # args.padding = 2
-    args.dim_2 = 1
-    args.kernel_size_2 = 3
-    args.stride_2 = 1
-    args.padding_2 = 1
-
     args.dim_1 = 4
     args.kernel_size_1 = 4
     args.stride_1 = 2

@@ -43,7 +43,6 @@ class Runner:
             print('Run {}, train epoch {}'.format(num, epoch))
             # 判断当前训练周期是否是评估周期 200个epoch评估一次
             if epoch % 10 == 0:
-            #if epoch % 200 == 0:
                 #调用evaluate()方法进行模型的评估，返回三个值，分别是胜率 (win_rate)、平均回报 (episode_reward) 和目标找到的平均数量 (targets_find)。
                 win_rate, episode_reward, targets_find = self.evaluate()
                 if self.args.search_env:#如果需要搜索
@@ -149,6 +148,17 @@ class Runner:
             ddqn_root = os.path.join(self.model_path, str(num) + '_ddqn_net_params.pkl')
             # 使用 self.agents.policy.load_model 方法加载 RNN 的预训练参数。
             self.agents.policy.load_model(ddqn_root)
+        elif self.args.alg == 'dqn':
+            # 构建 DQN模型的路径，加载 RNN 部分的预训练参数。
+            dqn_root = os.path.join(self.model_path, str(num) + '_dqn_net_params.pkl')
+            # 使用 self.agents.policy.load_model 方法加载 RNN 的预训练参数。
+            self.agents.policy.load_model(dqn_root)
+        elif self.args.alg == 'doubledqn':
+            # 构建 DQN模型的路径，加载 RNN 部分的预训练参数。
+            dqn_root = os.path.join(self.model_path, str(num) + '_dqn_net_params.pkl')
+            target_root = os.path.join(self.model_path, str(num) + '_target_dqn_net_params.pkl')
+            # 使用 self.agents.policy.load_model 方法加载 RNN 的预训练参数。
+            self.agents.policy.load_model(dqn_root,target_root)
         elif self.args.alg == 'reinforce':
             rnn_root = os.path.join(self.model_path, str(num) + '_rnn_net_params.pkl')
             self.agents.policy.load_model(rnn_root)
@@ -175,6 +185,17 @@ class Runner:
                 ddqn_root = os.path.join(self.model_path, str(num) + '_ddqn_net_params.pkl')
                 # 并加载预训练参数。
                 self.agents.policy.load_model(ddqn_root)
+            elif self.args.alg == 'dqn':
+                # 构建 DQN 模型的路径
+                dqn_root = os.path.join(self.model_path, str(num) + '_dqn_net_params.pkl')
+                # 并加载预训练参数。
+                self.agents.policy.load_model(dqn_root)
+            elif self.args.alg == 'doubledqn':
+                # 构建 DQN模型的路径，加载 RNN 部分的预训练参数。
+                dqn_root = os.path.join(self.model_path, str(num) + '_dqn_net_params.pkl')
+                target_root = os.path.join(self.model_path, str(num) + '_target_dqn_net_params.pkl')
+                # 使用 self.agents.policy.load_model 方法加载 RNN 的预训练参数。
+                self.agents.policy.load_model(dqn_root, target_root)
 
             #调用 RolloutWorker 的 generate_replay 方法进行回放，设置 collect=True 表示要进行数据收集，render=False 表示不进行渲染。
             #获取回放过程中 目标找到数量targets_find，回放的累积奖励episode_reward，回放结果res 和步数step。

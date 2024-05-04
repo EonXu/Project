@@ -376,7 +376,7 @@ class FlightSearchEnvEasy:
             plt.pause(3)
         #否则暂停0.1秒。
         else:
-            plt.pause(0.1)
+            plt.pause(1)
 
     def close(self):
         pass
